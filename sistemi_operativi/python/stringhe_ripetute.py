@@ -1,0 +1,121 @@
+
+
+
+
+import multiprocessing
+from threading import Thread,Barrier,Lock
+from time import sleep
+
+
+def esercizioSequenziale(s,t,k):
+
+    if len(t) < len(s):
+        return False
+
+
+    
+
+    total = 0
+    
+    for i in range(len(t) - len(s) + 1):
+        
+        if(t[i:i + len(s)].__eq__(s)):
+            print(t[i:i + len(s)])
+            total += 1
+            if(total >= k):
+                return True
+            
+    return False
+
+
+class StringWorker(Thread):
+
+    def __init__(self,a,b,min,max):
+        super().__init__()
+        self.analizzatore = a
+        self.barrier = b
+        self.__totaleTrovati = 0
+        self.min = min
+        self.max = max
+
+    def run(self):
+        for i in range(self.min,self.max):
+            if(self.analizzatore.t[i:i + len(self.analizzatore.s)].__eq__(self.analizzatore.s)):
+                self.__totaleTrovati += 1
+        
+        print(f"{self.name} Io Ne Ho Trovati: {self.__totaleTrovati}")
+        sleep(1)
+        self.barrier.wait() #dopo che il thread ha finito, entra nella barrier 
+    
+    def getTotTrovati(self):
+        return self.__totaleTrovati
+
+
+
+
+#s sarebbe la stringa usata per il controllo
+#t è la stringa dove si controlla se ci siano almeno k volte la stringa s
+class AnalizzatoreStringhe:
+
+    def __init__(self,s,t,k):
+        self.s = s
+        self.t = t
+        self.k = k
+
+    
+    def contieneAlmenoKStringhe(self):
+
+
+        #prendo il numero di cpu disponibili nel calcolatore
+        cpuNum = multiprocessing.cpu_count()
+
+        #lunghezze delle stringhe s e t
+        lenS = len(self.s)
+        lenT = len(self.t)
+
+        #se la lunghezza di s è maggiore della stringa t, non ha senso controllare visto che è impossibile che sia contenuto in una stringa più piccola
+        if lenS > lenT: 
+            print("Non ha senso controllare")
+            return False
+
+        step = (lenT - lenS + 1) // cpuNum
+
+        while(step == 0):
+            cpuNum -= 1
+            step = (lenT - lenS + 1) // cpuNum
+
+
+        barrier = Barrier(cpuNum + 1)
+
+
+        print(f"Totale Thread creati: {cpuNum}")
+
+        workers = [StringWorker(self,barrier,i * step,(i + 1) * step) for i in range(cpuNum - 1)]
+        for i in range(cpuNum - 1):
+            workers[i].start()
+
+        lastWorker = StringWorker(self,barrier,(cpuNum - 1) * step,lenT - lenS + 1)
+        lastWorker.start()
+        workers.append(lastWorker)
+
+        barrier.wait() #il main thread continua solo e solamente se altri 4 thread entrano in wait nella barrier
+
+        totale = 0 #posso in tutta serenità controllare i valori calcolati dai worker visto che hanno finito
+
+        for worker in workers:
+            totale += worker.getTotTrovati()
+
+
+        print(f"Valori Totali Trovati: {totale}")
+
+
+        return totale >= self.k
+
+
+    
+
+
+analiz = AnalizzatoreStringhe("sz","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",2)
+
+
+analiz.contieneAlmenoKStringhe()

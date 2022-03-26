@@ -1,0 +1,6 @@
+# Rimuovi roba di python
+*.pyc
+**/__pycache__
+
+
+
