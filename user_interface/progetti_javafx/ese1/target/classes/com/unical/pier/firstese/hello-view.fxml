@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unical.pier.firstese.HelloController">
+  <items>
+      <ScrollPane fitToHeight="true" fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT">
+         <content>
+            <VBox id="profileBox" fx:id="profileBox" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" />
+         </content>
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </ScrollPane>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="398.0" prefWidth="466.0">
+        <items>
+            <ScrollPane fx:id="scrollViewPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+               <content>
+                  <VBox fx:id="readBox" alignment="TOP_RIGHT" focusTraversable="true">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <BorderPane prefHeight="105.0" prefWidth="270.0">
+               <right>
+                  <Button id="sendButton" fx:id="sendButton" alignment="CENTER" mnemonicParsing="false" onAction="#onSendButton" text="INVIO" BorderPane.alignment="CENTER" />
+               </right>
+               <center>
+                  <TextArea fx:id="writingArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
+        </items>
+      </SplitPane>
+  </items>
+</SplitPane>
