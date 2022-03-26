@@ -13,6 +13,10 @@
 
 #just to safe 
 *.pdf
+*.pptx
+
+#cartella roba vecchia
+old_stuff
 
 
 
