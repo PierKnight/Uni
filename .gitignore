@@ -6,5 +6,13 @@
 **/out
 **/.idea
 
+#ignora file oggetto ed assembly
+*.out
+*.s
+
+
+#just to safe 
+*.pdf
+
 
 
