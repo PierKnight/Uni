@@ -8,8 +8,9 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unical.pier.firstese.HelloController">
+<SplitPane id="main" dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.unical.pier.firstese.controller.MainController">
   <items>
       <ScrollPane fitToHeight="true" fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT">
          <content>
@@ -19,7 +20,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </ScrollPane>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="398.0" prefWidth="466.0">
+      <SplitPane dividerPositions="0.37198795180722893" orientation="VERTICAL" prefHeight="398.0" prefWidth="466.0">
         <items>
             <ScrollPane fx:id="scrollViewPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
                <content>
@@ -35,7 +36,10 @@
                   <Button id="sendButton" fx:id="sendButton" alignment="CENTER" mnemonicParsing="false" onAction="#onSendButton" text="INVIO" BorderPane.alignment="CENTER" />
                </right>
                <center>
-                  <TextArea fx:id="writingArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                  <TextArea fx:id="writingArea" prefHeight="200.0" prefWidth="200.0" promptText="Inserisci un messaggio" wrapText="true" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="22.0" />
+                     </font></TextArea>
                </center>
             </BorderPane>
         </items>
