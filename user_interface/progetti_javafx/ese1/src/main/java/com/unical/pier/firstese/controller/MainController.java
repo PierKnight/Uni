@@ -1,4 +1,4 @@
-package com.unical.pier.firstese;
+package com.unical.pier.firstese.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
