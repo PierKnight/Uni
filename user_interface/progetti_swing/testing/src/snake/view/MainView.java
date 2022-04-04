@@ -2,8 +2,6 @@ package snake.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class MainView {
 
@@ -22,15 +20,15 @@ public class MainView {
                 ,"Snake Inputs",JOptionPane.INFORMATION_MESSAGE);
 
 
-        GamePanel gamePanel = new GamePanel();
+        SnakePanel gamePanel = new SnakePanel();
         gamePanel.requestFocus();
         gamePanel.setFocusable(true);
         frame.add(gamePanel);
-        frame.setSize(500,500);
-        frame.setMinimumSize(frame.getSize());
-        frame.setVisible(true);
+        frame.setSize(400,400);
+        frame.setMinimumSize(new Dimension(400,400));
         frame.setLocationRelativeTo(null);
-        frame.setUndecorated();
+        frame.pack();
+        frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 }
