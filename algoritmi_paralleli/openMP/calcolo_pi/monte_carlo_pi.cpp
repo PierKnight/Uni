@@ -5,9 +5,11 @@
 
 
 
-double getPi(int totalTries,int round)
+double getPi(unsigned int totalTries)
 {
-    omp_set_num_threads(omp_get_num_procs());
+    int nCore = 8;
+    printf("Utilizzerò %d core.\n",nCore);
+    omp_set_num_threads(nCore);
 
     int totalCirclePoints = 0;
 
@@ -15,7 +17,7 @@ double getPi(int totalTries,int round)
     #pragma omp parallel 
     {
 
-        int threadID = omp_get_thread_num();
+        unsigned int threadID = omp_get_thread_num();
         //create seed on thread using current time
         //unsigned int seed = (unsigned) time(NULL);
         
@@ -31,10 +33,10 @@ double getPi(int totalTries,int round)
         #pragma omp for
         for(int i = 0;i < totalTries;i++)
         {
-            unsigned int seed1 = (unsigned)i;
-            unsigned int seed2 = (unsigned)i*i;
-            double x = ((rand_r(&seed1) % (round + 1)) / (double)round) - 0.5;
-            double y = ((rand_r(&seed2) % (round + 1)) / (double)round) - 0.5;
+            
+
+            double x = ((double)rand_r(&threadID) / RAND_MAX) - 0.5;
+            double y = ((double)rand_r(&threadID) / RAND_MAX) - 0.5;
 
             if(x * x + y * y <= 0.25)
             {
@@ -58,7 +60,7 @@ double getPi(int totalTries,int round)
 
 int main(int argc, char const *argv[])
 {
-    double e = getPi(999999999,10000);
-    printf("%f\n",e);
+    double e = getPi(2000000000);
+    printf("%27.25f \n",e);
     return 0;
 }
