@@ -5,13 +5,16 @@
 
 
 
-double getPi(unsigned int totalTries)
+double getPi(unsigned long totalTries)
 {
+
+    printf("Farò %lu tentativi.\n",totalTries);
+
     int nCore = 8;
     printf("Utilizzerò %d core.\n",nCore);
     omp_set_num_threads(nCore);
 
-    int totalCirclePoints = 0;
+    unsigned long totalCirclePoints = 0;
 
     double start_time = omp_get_wtime();
     #pragma omp parallel 
@@ -28,10 +31,10 @@ double getPi(unsigned int totalTries)
         //printf("My seed %d\n",finalSeed);
 
         
-        int localCirclePoints = 0;
+        unsigned long localCirclePoints = 0;
 
         #pragma omp for
-        for(int i = 0;i < totalTries;i++)
+        for(unsigned int i = 0;i < totalTries;i++)
         {
             
 
@@ -39,10 +42,7 @@ double getPi(unsigned int totalTries)
             double y = ((double)rand_r(&threadID) / RAND_MAX) - 0.5;
 
             if(x * x + y * y <= 0.25)
-            {
                 localCirclePoints += 1;
-                //printf("X: %f, Y: %f\n",x,y);
-            }
         }
 
         #pragma omp critical
@@ -60,7 +60,10 @@ double getPi(unsigned int totalTries)
 
 int main(int argc, char const *argv[])
 {
-    double e = getPi(2000000000);
+
+    unsigned long test = 100000000;
+
+    double e = getPi(test);
     printf("%27.25f \n",e);
     return 0;
 }
