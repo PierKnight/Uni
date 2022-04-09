@@ -99,13 +99,6 @@ public class SceneHandler {
 
         try {
             Stage stage = new Stage();
-            stage.onCloseRequestProperty().addListener(new ChangeListener<EventHandler<WindowEvent>>() {
-                @Override
-                public void changed(ObservableValue<? extends EventHandler<WindowEvent>> observableValue, EventHandler<WindowEvent> windowEventEventHandler, EventHandler<WindowEvent> t1) {
-                    System.out.println("eeeee");
-                }
-            });
-
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Register new book");
             stage.setMinHeight(400);
@@ -127,7 +120,6 @@ public class SceneHandler {
     public void createAlertMessage(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
-        //alert.setContentText(message);
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
 
         TextArea area = new TextArea(message);
