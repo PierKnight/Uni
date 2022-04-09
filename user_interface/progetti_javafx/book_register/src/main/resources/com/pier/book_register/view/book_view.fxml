@@ -5,29 +5,43 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pier.book_register.controller.BooksController">
    <children>
-      <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="60.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <GridPane prefHeight="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" onAction="#onLogoutPressed" text="Logout" />
-            <Button mnemonicParsing="false" onAction="#onAddBookPressed" text="Load">
-               <HBox.margin>
-                  <Insets right="60.0" />
-               </HBox.margin>
+            <Button mnemonicParsing="false" onAction="#onAddBookPressed" text="Add book" GridPane.halignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
+            <Button mnemonicParsing="false" onAction="#onLightSwitchPressed" text="Switch light theme" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
             </Button>
-            <Button mnemonicParsing="false" onAction="#onAddBookPressed" text="Add book" />
-            <Button mnemonicParsing="false" onAction="#onLightSwitchPressed" text="Switch light theme">
-               <HBox.margin>
-                  <Insets right="30.0" />
-               </HBox.margin>
+            <Button mnemonicParsing="false" onAction="#onLoadPressed" text="Load" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
             </Button>
+            <Button mnemonicParsing="false" onAction="#onLogoutPressed" text="Logout" GridPane.columnIndex="3" GridPane.halignment="CENTER">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
          </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </HBox>
+      </GridPane>
       <TableView fx:id="bookTable" onKeyPressed="#tableKeyPressed" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
         <columns>
           <TableColumn fx:id="isbnColumn" prefWidth="75.0" sortable="false" text="ISBN" />

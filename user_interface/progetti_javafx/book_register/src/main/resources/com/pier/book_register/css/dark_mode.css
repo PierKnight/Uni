@@ -1,0 +1,80 @@
+.root
+{
+    -fx-primary-color: #222831;
+    -fx-secondary-color: #393E46;
+    -fx-border: #4a5059;
+    -fx-selection-color: #5b0f88;
+    -fx-text-color: #e7e0e0;
+    -fx-focus-color: -fx-selection-color;
+    -fx-hover-color: -fx-border;
+    -fx-background-color: -fx-primary-color;
+}
+
+*{
+    -fx-text-fill: -fx-text-color;
+}
+
+.column-header
+{
+    -fx-background-color: -fx-secondary-color;
+    -fx-border-color: -fx-border;
+}
+.table-row-cell:odd
+{
+    -fx-background-color: -fx-secondary-color
+}
+
+.text-field,
+.password-field,
+.button {
+    -fx-background-color: -fx-secondary-color;
+    -fx-border-color: -fx-border;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-background-insets: 1;
+}
+.table-view,
+.table-row-cell:even {
+    -fx-background-color: -fx-primary-color;
+}
+.table-row-cell:selected
+{
+    -fx-background-color: -fx-selection-color;
+}
+
+.table-row-cell {
+    -fx-table-cell-border-color: transparent;
+}
+
+/* focused elements section */
+.text-field:focused,
+.table-view:focused,
+.button:focused,
+.toggle-button:focused,
+.radio-button:focused > .radio,
+.check-box:focused > .box,
+.menu-button:focused,
+.choice-box:focused,
+.color-picker.split-button:focused > .color-picker-label,
+.combo-box-base:focused,
+.slider:focused .thumb {
+    -fx-background-color: -fx-focus-color;
+    -fx-border-color: -fx-focus-color;
+}
+
+/* hover elements section */
+.button:hover,
+.text-field:hover{
+    -fx-background-color: -fx-hover-color;
+    -fx-background-insets: 0
+}
+
+.button:pressed{
+    -fx-background-color: derive(-fx-selection-color,20%);
+}
+
+
+.scroll-bar:horizontal {
+    -fx-background-color: derive(-fx-secondary-color,30%);
+    -fx-background-insets: 0, 1 0 1 0;
+}

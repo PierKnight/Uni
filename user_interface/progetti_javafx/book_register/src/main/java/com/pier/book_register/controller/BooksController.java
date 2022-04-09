@@ -50,8 +50,7 @@ public class BooksController {
 
     @FXML
     void onLightSwitchPressed(ActionEvent event) {
-
-
+        SceneHandler.getInstance().switchLightMode();
     }
 
     @FXML
@@ -93,9 +92,13 @@ public class BooksController {
     }
 
     @FXML
+    void onLoadPressed(ActionEvent event) {
+
+    }
+
+    @FXML
     void initialize()
     {
-        System.out.println("TNJILTHILERLJK");
         ObservableList<Book> list = UserHandler.getInstance().getLoggedUser().getBookManager().getBooks();
         bookTable.setItems(list);
 
@@ -109,5 +112,6 @@ public class BooksController {
 
 
     }
+
 
 }
