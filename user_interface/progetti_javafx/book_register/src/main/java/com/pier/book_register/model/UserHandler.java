@@ -16,7 +16,7 @@ public class UserHandler {
     }
 
     private User loggedUser = null;
-    private Map<String,User> userDataBase = new HashMap<>();
+    private final Map<String,User> userDataBase = new HashMap<>();
 
     public void init()
     {

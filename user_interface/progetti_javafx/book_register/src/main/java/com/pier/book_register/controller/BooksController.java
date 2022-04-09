@@ -15,7 +15,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.input.*;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,8 +93,18 @@ public class BooksController {
 
     }
 
+    private static final FileChooser.ExtensionFilter TXT_FILTER = new FileChooser.ExtensionFilter("Text Files","*.txt");
+
     @FXML
     void onLoadPressed(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Book File");
+        fileChooser.getExtensionFilters().add(TXT_FILTER);
+        File selectedFile = fileChooser.showOpenDialog(this.bookTable.getScene().getWindow());
+
+        if(selectedFile != null)
+            UserHandler.getInstance().getLoggedUser().getBookManager().readFromFile(selectedFile);
 
     }
 

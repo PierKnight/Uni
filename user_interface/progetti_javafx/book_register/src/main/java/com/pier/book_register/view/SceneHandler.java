@@ -1,11 +1,17 @@
 package com.pier.book_register.view;
 
 import com.pier.book_register.BookApplication;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -93,6 +99,13 @@ public class SceneHandler {
 
         try {
             Stage stage = new Stage();
+            stage.onCloseRequestProperty().addListener(new ChangeListener<EventHandler<WindowEvent>>() {
+                @Override
+                public void changed(ObservableValue<? extends EventHandler<WindowEvent>> observableValue, EventHandler<WindowEvent> windowEventEventHandler, EventHandler<WindowEvent> t1) {
+                    System.out.println("eeeee");
+                }
+            });
+
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Register new book");
             stage.setMinHeight(400);
@@ -111,14 +124,23 @@ public class SceneHandler {
     }
 
 
-    public void createErrorMessage(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Errore");
-        alert.setContentText(message);
+    public void createAlertMessage(String title, String message, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        //alert.setContentText(message);
         alert.getDialogPane().getStylesheets().addAll(this.scene.getStylesheets());
+
+        TextArea area = new TextArea(message);
+        area.setFont(Font.font("verdana",18));
+        area.setWrapText(true);
+        area.setEditable(false);
+        alert.getDialogPane().setContent(area);
         alert.show();
     }
 
-
+    public void createErrorMessage(String message)
+    {
+        this.createAlertMessage("ERROR!",message, Alert.AlertType.ERROR);
+    }
 
 }

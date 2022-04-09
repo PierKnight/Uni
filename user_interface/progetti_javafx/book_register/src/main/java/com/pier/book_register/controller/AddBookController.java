@@ -2,15 +2,21 @@ package com.pier.book_register.controller;
 
 import com.pier.book_register.model.Book;
 import com.pier.book_register.model.UserHandler;
-import com.pier.book_register.view.SceneHandler;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.input.Clipboard;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class AddBookController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class AddBookController implements Initializable {
 
     @FXML
     private TextField ISBNTextField;
@@ -28,6 +34,9 @@ public class AddBookController {
     private TextField yearTextField;
 
     @FXML
+    private Button pasteButton;
+
+    @FXML
     void onAddBookPressed(ActionEvent event) {
 
         Book book = new Book(this.ISBNTextField.getText(),
@@ -40,10 +49,20 @@ public class AddBookController {
         stage.close();
     }
 
-
     @FXML
-    void initialize()
-    {
+    void onPasteBookPressed(ActionEvent event) {
+
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), e-> {
+            Book copiedBook = Book.readFromString(Clipboard.getSystemClipboard().getString());
+            pasteButton.setDisable(copiedBook == null);
+            System.out.println("eee");
+
+        }));
+
+
+    }
 }

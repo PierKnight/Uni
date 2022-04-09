@@ -3,7 +3,7 @@
     -fx-primary-color: #222831;
     -fx-secondary-color: #393E46;
     -fx-border: #4a5059;
-    -fx-selection-color: #5b0f88;
+    -fx-selection-color: #4b0d6e;
     -fx-text-color: #e7e0e0;
     -fx-focus-color: -fx-selection-color;
     -fx-hover-color: -fx-border;
@@ -58,8 +58,7 @@
 .color-picker.split-button:focused > .color-picker-label,
 .combo-box-base:focused,
 .slider:focused .thumb {
-    -fx-background-color: -fx-focus-color;
-    -fx-border-color: -fx-focus-color;
+    -fx-effect: dropshadow(gaussian, derive(-fx-border, 50%),5,0,0,0);
 }
 
 /* hover elements section */
