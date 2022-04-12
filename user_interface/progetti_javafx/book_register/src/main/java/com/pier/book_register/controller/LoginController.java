@@ -23,8 +23,8 @@ public class LoginController {
     void onLoginPressed(ActionEvent event) {
 
         UserHandler userHandler = UserHandler.getInstance();
-        //if(userHandler.tryToLogin(usernameField.getText(),passwordField.getText()))
-        if(userHandler.tryToLogin("username1","password1")) //debug only
+        if(userHandler.tryToLogin(usernameField.getText(),passwordField.getText()))
+        //if(userHandler.tryToLogin("username1","password1")) //debug only
             SceneHandler.getInstance().createBooksScene();
         else
             SceneHandler.getInstance().createErrorMessage("Username o Password errate!");

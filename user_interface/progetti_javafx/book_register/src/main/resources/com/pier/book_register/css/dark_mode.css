@@ -14,15 +14,6 @@
     -fx-text-fill: -fx-text-color;
 }
 
-.column-header
-{
-    -fx-background-color: -fx-secondary-color;
-    -fx-border-color: -fx-border;
-}
-.table-row-cell:odd
-{
-    -fx-background-color: -fx-secondary-color
-}
 .text-area,
 .text-field,
 .password-field,
@@ -39,6 +30,17 @@
 .table-row-cell:even {
     -fx-background-color: -fx-primary-color;
 }
+
+.column-header
+{
+    -fx-background-color: -fx-secondary-color;
+    -fx-border-color: -fx-border;
+}
+.table-row-cell:odd
+{
+    -fx-background-color: -fx-secondary-color
+}
+
 .table-row-cell:selected
 {
     -fx-background-color: -fx-selection-color;
