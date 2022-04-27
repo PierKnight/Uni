@@ -24,5 +24,9 @@ while($frase =~ /(\S+)/g)
 }
 
 
+#PER OTTENERE TUTTI L'ARRAY DI GRUPPI SI USA @{^CAPTURE}
+# {} è la deferenziazione in perl, ^ si usa per indicare i puntatori
+
+
 
 

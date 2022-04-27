@@ -53,3 +53,47 @@ $info = "eilrje/mrrerm/ekr/dmerker/sos.txt";
 print "PRIMO ELEMENTO: $array_splittato[0]\n";
 
 
+#HASH DI ARRAY
+# KEY1 => [1,2,3]
+
+#le hash non hanno possibilità normalmente di inserire array ma solo scalari come value;
+
+@array_1 = (1,2,3);
+%mappa_array;
+
+#usiamo il riferimento dell'array come value
+#con [<array>]
+$mappa_array{"sos"} = [@array_1];
+
+#deferenziare un array, si deferenzia con il tipo di variabile e poi nelle graffe il riferimento
+#def_array = @{<riferimento>}
+#la @ se si usa su un array
+#la $ se si usa uno scalar
+
+@def = @{$mappa_array{"sos"}};
+
+
+#HASH DI HASH
+#creazione
+$HoH{primaChiave}{francesco} = "ciao 1";
+$HoH{primaChiave}{denise} = "ciao 2";
+
+$HoH{secondaChiave}{francesco} = "ciao 11";
+$HoH{secondaChiave}{denise} = "ciao 22";
+
+#oppire
+
+%hashofhash = (primaChiave => {francesco => 1},secondaChiave => {francesco => 22});
+
+#regex per sostituire match
+
+$stringa = "ik4,wklj3 rkge lfsos enjwlkwrsosqaQEW";
+
+$stringa =~ s/sos/ses/g;
+
+print $stringa . "\n";
+
+
+
+
+
