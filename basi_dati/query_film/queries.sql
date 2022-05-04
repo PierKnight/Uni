@@ -11,3 +11,11 @@ where film_id IN
 	select Z.film_id
 	from actor as X, film_actor as Y, film as Z
 	where X.actor_id = Y.actor_id and Y.film_id = Z.film_id and X.first_name = "nick");
+	
+--secondo modo
+select title
+from film as Z
+where film_id in 
+	select *
+	from film_actor as X,actor as Y
+	where X.actor_id = Y.actor_id and X.film_id = Z.film_id and (Y.first_name = "nick" or
