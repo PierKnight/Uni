@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
         MPI_Request req;
         MPI_Isend(megaLista,size,MPI_INT,1,1,MPI_COMM_WORLD,&req);
 
+        megaLista[0]=666;
+
 
         MPI_Wait(&req,nullptr);
         printf("INVIATO TUTTO!\n");

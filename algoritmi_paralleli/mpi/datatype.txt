@@ -1,0 +1,24 @@
+meno messaggi inviamo meglio è
+
+vedremo tre modi per raggruppare data ed inviarlo
+#MPI_Pack / MPI_Unpack
+
+
+come inviare insieme dati che non sono contigui o addirittura non dello stesso tipo.
+
+DATA_TYPE descrivono il layout di variabili nella memoria da inviare
+
+
+--------------
+MPI_Type_contiguous 
+MPI_Type_vector costuisce datatype da elementi equamente spaziati di un array;
+MPI_Type_indexed datatype che si basano su posizioni arbitrarie da un array contiguo
+
+------------TOPOLOGIE VIRTUALI
+
+- Comunicatori e gruppi
+sarebbe creare dei comunicatori dove limiti quale processo può comunicare con chi
+
+MPI_Comm_create crei un nuovo comunicatore e i membri del gruppo sono definiti in strutture chiamate gruppi
+
+
