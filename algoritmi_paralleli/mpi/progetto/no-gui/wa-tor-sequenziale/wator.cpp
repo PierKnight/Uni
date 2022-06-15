@@ -2,8 +2,11 @@
 #define SEQUENTIAL_WATOR
 #include "creature.cpp"
 #include <stdio.h>
-#define ROWS 32
-#define COLS 64
+#include <time.h>
+#include <stdlib.h>
+
+#define ROWS 3000
+#define COLS 1000
 #define V(R,C) ((R) * COLS + (C))
 //fish stats
 #define FISH_TRESHHOLD 1
@@ -111,7 +114,7 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
 
 inline void updateWorld(creature* matrix,int fromRow,int rows,bool isBorder)
 {
-    srand (time(NULL));
+    srand(time(NULL));
 
     
     int toRow = fromRow + rows;

@@ -2,8 +2,8 @@
 #define SEQUENTIAL_WATOR
 #include "creature.cpp"
 #include <stdio.h>
-#define ROWS 32
-#define COLS 64
+#define ROWS 3000
+#define COLS 1000
 #define V(R,C) ((R) * COLS + (C))
 //fish stats
 #define FISH_TRESHHOLD 1
