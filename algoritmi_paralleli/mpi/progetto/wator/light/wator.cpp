@@ -2,15 +2,8 @@
 #define SEQUENTIAL_WATOR
 #include "creature.cpp"
 #include <stdio.h>
-#define ROWS 3000
-#define COLS 1000
 #define V(R,C) ((R) * COLS + (C))
-//fish stats
-#define FISH_TRESHHOLD 1
-//shark stats
-#define START_ENERGY 50
-#define SHARK_TRESHHOLD 10
-#define EAT_ENERGY 1
+#include "../settings.cpp"
 
 inline void getValidPosition(creature* matrix,int i,int j,int type,int* result)
 {
@@ -19,13 +12,13 @@ inline void getValidPosition(creature* matrix,int i,int j,int type,int* result)
     int curVal = 0;
     int size = 0;
 
-    if(matrix[curVal = V((i + ROWS + 1) % ROWS,j)].type == type)
+    if(matrix[curVal = V((i + ROWS + 1) % ROWS,j)].type() == type)
         valid_pos[size++] = curVal;
-    if(matrix[curVal = V((i + ROWS - 1) % ROWS,j)].type == type)
+    if(matrix[curVal = V((i + ROWS - 1) % ROWS,j)].type() == type)
         valid_pos[size++] = curVal;
-    if(matrix[curVal = V(i,(j + COLS + 1) % COLS)].type == type)
+    if(matrix[curVal = V(i,(j + COLS + 1) % COLS)].type() == type)
         valid_pos[size++] = curVal;
-    if(matrix[curVal = V(i,(j + COLS - 1) % COLS)].type == type)
+    if(matrix[curVal = V(i,(j + COLS - 1) % COLS)].type() == type)
         valid_pos[size++] = curVal;
     if(size == 0)
     {
@@ -47,14 +40,14 @@ inline void fishUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool i
     int energy = matrix[V(i,j)].energy;
 
     if(energy <= FISH_TRESHHOLD)
-        matrix[V(i,j)].type = WATER;
+        matrix[V(i,j)].setType(WATER);
     else if(pos != V(i,j))
         energy = -1;
 
 
     matrix[V(i,j)].energy = 0;
     matrix[pos].energy = energy + 1;
-    matrix[pos].type = FISH;
+    matrix[pos].setType(FISH);
 
 
     int posRow = pos / COLS;
@@ -68,7 +61,7 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
     //if not enough energy the shark dies
     if(energy < 0)
     {
-        matrix[currentPos].type = WATER;
+        matrix[currentPos].setType(WATER);
         matrix[currentPos].energy = 0;
         return;
     }
@@ -81,10 +74,10 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
     {
         getValidPosition(matrix,i,j,WATER,&pos);
         int posRow = pos / COLS;
-        matrix[currentPos].type = WATER;
+        matrix[currentPos].setType(WATER);
         matrix[currentPos].energy = 0;
         matrix[pos].energy = energy - 1;
-        matrix[pos].type = SHARK;
+        matrix[pos].setType(SHARK);
         matrix[pos].moved = posRow >= fromRow && posRow < toRow ? pos > V(i,j) : isBorder;
         return;
     }
@@ -94,18 +87,18 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
     if(energy > SHARK_TRESHHOLD)
     {
         energy /= 2;
-        matrix[currentPos].type = SHARK;
+        matrix[currentPos].setType(SHARK);
         matrix[currentPos].energy = energy;
     }
     else
     {
-        matrix[currentPos].type = WATER;
+        matrix[currentPos].setType(WATER);
         matrix[currentPos].energy = 0;
     }
 
     //move to fish cell and increase energy
     matrix[pos].energy = energy + EAT_ENERGY;
-    matrix[pos].type = SHARK;
+    matrix[pos].setType(SHARK);
     matrix[pos].moved = posRow >= fromRow && posRow < toRow ? pos > V(i,j) : isBorder;
 }
 
@@ -122,9 +115,9 @@ inline void updateWorld(creature* matrix,int fromRow,int rows,bool isBorder)
             if(!matrix[V(i,j)].moved)
             {
                 creature c = matrix[V(i,j)];
-                if(c.type == FISH)
+                if(c.type() == FISH)
                     fishUpdate(matrix,i,j,fromRow,toRow,isBorder);
-                else if(c.type == SHARK)
+                else if(c.type() == SHARK)
                     sharkUpdate(matrix,i,j,fromRow,toRow,isBorder);
             }
             else

@@ -1,14 +1,11 @@
 #include <mpi.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
-#include "sequential.cpp"
-#define CELL_SIZE 10
+#include "wator/big/wator.cpp"
+#define CELL_SIZE 5
 
 
-
-//compilazione g++ <file> -lallegro
-//g++ parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5)
-//mpiCC parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5 )
+//mpiCC allegro_parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5 )
 //export DISPLAY=:0
 
 
@@ -49,8 +46,6 @@ inline void drawWorld(creature* matrix)
                 al_draw_filled_rectangle(j * CELL_SIZE,i * CELL_SIZE,j * CELL_SIZE + CELL_SIZE,i * CELL_SIZE + CELL_SIZE,color);
                 totalShark++;
             }
-            if(matrix[index].moved)
-                printf("OH NO! %d, %d\n",i,j);
         }
     }
     printf("TOTALE PESCI %d\n",totalFish);
@@ -93,7 +88,7 @@ int main(int argc, char *argv[])
     {
         printf("SETUP ALLEGRO\n");
         if(!al_init())
-            printf("FUCK!\n");
+            printf("Failed Init allegro!\n");
         display = al_create_display(COLS * CELL_SIZE,ROWS * CELL_SIZE);
         if(!display)
             printf("failed to create display!\n");
@@ -120,7 +115,7 @@ int main(int argc, char *argv[])
             
     }
 
-    for(int t = 0;t < 1000;t++)
+    for(int t = 0;t < CYCLES;t++)
     {
         //aggiorna l'interno della matrice
         updateWorld(matrix,3,ROWS / nProc - 2 + extra,true);
@@ -153,7 +148,6 @@ int main(int argc, char *argv[])
         MPI_Gatherv(&matrix[V(2,0)],(ROWS / nProc + extra) * COLS,type,drawMatrix,recvcounts,disp,type,0,MPI_COMM_WORLD);
         if(rank == 0)
         {
-            printf("DRAW\n");
             drawWorld(drawMatrix);
             al_rest(0.1);
         }

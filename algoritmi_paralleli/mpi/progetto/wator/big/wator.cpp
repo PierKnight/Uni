@@ -1,19 +1,11 @@
 #ifndef SEQUENTIAL_WATOR
 #define SEQUENTIAL_WATOR
+#include <stdlib.h>
+#include <time.h>
 #include "creature.cpp"
 #include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-
-#define ROWS 3000
-#define COLS 1000
+#include "../settings.cpp"
 #define V(R,C) ((R) * COLS + (C))
-//fish stats
-#define FISH_TRESHHOLD 1
-//shark stats
-#define START_ENERGY 50
-#define SHARK_TRESHHOLD 10
-#define EAT_ENERGY 1
 
 inline void getValidPosition(creature* matrix,int i,int j,int type,int* result)
 {

@@ -1,15 +1,5 @@
 #include <mpi.h>
-#include "wator.cpp"
-#define CELL_SIZE 10
-
-
-
-//compilazione g++ <file> -lallegro
-//g++ parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5)
-//mpiCC parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5 )
-//export DISPLAY=:0
-
-
+#include "wator/light/wator.cpp"
 
 inline void createCreatureType(MPI_Datatype* data)
 {
@@ -52,7 +42,7 @@ int main(int argc, char *argv[])
         startTime = MPI_Wtime();
     }
 
-    for(int t = 0;t < 1000;t++)
+    for(int t = 0;t < CYCLES;t++)
     {
         //aggiorna l'interno della matrice
         updateWorld(matrix,3,ROWS / nProc - 2 + extra,true);

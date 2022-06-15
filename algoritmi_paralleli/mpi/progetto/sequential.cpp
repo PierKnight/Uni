@@ -1,4 +1,4 @@
-#include "wator.cpp"
+#include "wator/big/wator.cpp"
 
 int main(int argc, char *argv[])
 {
@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     matrix[V(2,0)].type = FISH;
     startTime = clock();
 
-    for(int t = 0;t < 1000;t++)
+    for(int t = 0;t < CYCLES;t++)
     {
         //aggiorna l'interno della matrice
         updateWorld(matrix,0,ROWS,true);

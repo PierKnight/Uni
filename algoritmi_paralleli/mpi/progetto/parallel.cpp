@@ -1,22 +1,13 @@
 #include <mpi.h>
-#include "wator.cpp"
+#include "wator/big/wator.cpp"
 #define CELL_SIZE 10
-
-
-
-//compilazione g++ <file> -lallegro
-//g++ parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5)
-//mpiCC parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5 )
-//export DISPLAY=:0
-
-
 
 inline void createCreatureType(MPI_Datatype* data)
 {
-    MPI_Aint displacements[2]  = {offsetof(creature,moved),offsetof(creature,energy)};
-    int block_lengths[2]  = {1,1};
-    MPI_Datatype types[2] = {MPI_CXX_BOOL,MPI_INT};
-    MPI_Type_create_struct(2, block_lengths, displacements, types, data);
+    MPI_Aint displacements[3]  = {offsetof(creature,moved),offsetof(creature,energy),offsetof(creature,type)};
+    int block_lengths[3]  = {1,1,1};
+    MPI_Datatype types[3] = {MPI_CXX_BOOL,MPI_INT,MPI_INT};
+    MPI_Type_create_struct(3, block_lengths, displacements, types, data);
     MPI_Type_commit(data);
 }
 
@@ -48,11 +39,11 @@ int main(int argc, char *argv[])
     //setup process 0
     if(rank == 0)
     {
-        matrix[V(2,0)].setType(FISH);
+        matrix[V(2,0)].type = FISH;
         startTime = MPI_Wtime();
     }
 
-    for(int t = 0;t < 1000;t++)
+    for(int t = 0;t < CYCLES;t++)
     {
         //aggiorna l'interno della matrice
         updateWorld(matrix,3,ROWS / nProc - 2 + extra,true);
