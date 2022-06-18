@@ -49,7 +49,20 @@ int main(int argc, char *argv[])
 
 
         MPI_Request request;
-        if(rank % 2 == 0) //i processi pari ricevono i bordi, li aggiornano e li rinviano
+        if(nProc % 2 == 1 && rank == 0) //questo serve per gestire il caso di un numero dispari di processori
+        {
+            //invio parte di sinistra
+            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,(rank + nProc - 1) % nProc,0,MPI_COMM_WORLD,&request);
+            //riceve aggiorna e reinvia il bordo di destra
+            MPI_Recv(&matrix[V(ROWS / nProc + 2 + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
+            updateWorld(matrix, ROWS / nProc + 1 + extra, 2,false);
+            MPI_Isend(&matrix[V(ROWS / nProc + 2 + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
+            
+            //riceve il bordo lavorato di sinistra
+            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,(rank + nProc - 1) % nProc,1,MPI_COMM_WORLD,nullptr);
+          
+        }
+        else if(rank % 2 == 0) //i processi pari ricevono i bordi, li aggiornano e li rinviano
         {
             MPI_Recv(matrix,COLS * 2,type,(rank + nProc - 1) % nProc,1,MPI_COMM_WORLD,nullptr);
             MPI_Recv(&matrix[V(ROWS / nProc + 2 + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);

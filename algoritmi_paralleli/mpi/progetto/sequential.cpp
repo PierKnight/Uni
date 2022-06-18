@@ -4,6 +4,7 @@ int main(int argc, char *argv[])
 {
 
     creature* matrix = new creature[ROWS * COLS];
+    initMatrix(matrix,0,ROWS,COLS);
     double startTime;
 
     matrix[V(2,0)].type = FISH;

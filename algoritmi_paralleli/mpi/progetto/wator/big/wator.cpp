@@ -7,6 +7,7 @@
 #include "../settings.cpp"
 #define V(R,C) ((R) * COLS + (C))
 
+//ottieni una posizione valida causale dato il tipo di creatura ricercata
 inline void getValidPosition(creature* matrix,int i,int j,int type,int* result)
 {
     int valid_pos[4];
@@ -35,10 +36,9 @@ inline void fishUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool i
     int pos;
     getValidPosition(matrix,i,j,WATER,&pos);
 
-    //pos = V((i + ROWS - 1) % ROWS,j);
+    //pos = V((i + ROWS + 1) % ROWS,j);
     //pos = V(i,(j + COLS + 1) % COLS);
-
-
+    
     int energy = matrix[V(i,j)].energy;
 
     if(energy <= FISH_TRESHHOLD)
@@ -102,6 +102,19 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
     matrix[pos].energy = energy + EAT_ENERGY;
     matrix[pos].type = SHARK;
     matrix[pos].moved = posRow >= fromRow && posRow < toRow ? pos > V(i,j) : isBorder;
+}
+
+inline void initMatrix(creature* matrix,int offset,int rows,int cols)
+{
+    for(int i = offset;i < rows + offset;i++)
+    {
+        for(int j = 0;j < cols;j++)
+        {
+            matrix[V(i,j)].type = rand() % 3;
+            if(matrix[V(i,j)].type == SHARK)
+                matrix[V(i,j)].energy = START_ENERGY;
+        }
+    }
 }
 
 inline void updateWorld(creature* matrix,int fromRow,int rows,bool isBorder)

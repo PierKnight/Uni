@@ -20,10 +20,14 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     MPI_Comm_size(MPI_COMM_WORLD,&nProc);
 
+    //il numero di righe per processo (senza contare il resto)
+    int procRows = ROWS / nProc;
+
     if(rank == 0 && ROWS < nProc * 4)
     {
         printf("this wa-tor implementation requieres that the number of rows is at least four times bigger the number of precesses\n");
-        MPI_Abort(MPI_COMM_WORLD,0);
+        MPI_Finalize();
+        exit(0);
     }
 
     MPI_Datatype type;
@@ -32,7 +36,8 @@ int main(int argc, char *argv[])
     //questo serve per distrubuire il resto delle righe (se presenti)
     int extra = (rank < ROWS % nProc) ? 1 : 0;
 
-    creature* matrix = new creature[(ROWS / nProc + 4 + 1) * COLS];
+    creature* matrix = new creature[(procRows + 4 + extra) * COLS];
+    initMatrix(matrix,2,procRows + extra,COLS);
 
     double startTime;
 
@@ -46,30 +51,48 @@ int main(int argc, char *argv[])
     for(int t = 0;t < CYCLES;t++)
     {
         //aggiorna l'interno della matrice
-        updateWorld(matrix,3,ROWS / nProc - 2 + extra,true);
+        updateWorld(matrix,3,procRows - 2 + extra,true);
 
 
         MPI_Request request;
-        if(rank % 2 == 0) //i processi pari ricevono i bordi, li aggiornano e li rinviano
+
+        if(nProc % 2 == 1 && rank == 0) //questo serve per gestire il caso di un numero dispari di processori
         {
+            //invio parte di sinistra
+            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,(rank + nProc - 1) % nProc,0,MPI_COMM_WORLD,&request);
+            //riceve aggiorna e reinvia il bordo di destra
+            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
+            updateWorld(matrix, procRows + 1 + extra, 2,false);
+            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
+            
+            //riceve il bordo lavorato di sinistra
+            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,(rank + nProc - 1) % nProc,1,MPI_COMM_WORLD,nullptr);
+          
+        }
+        else if(rank % 2 == 0) //i processi pari ricevono i bordi, li aggiornano e li rinviano
+        {
+            //si può notare overhead causato da idle dei processi che devono aspettare ambedue vicini di inviare i bordi
+            //cerchiamo di tamponare, (anche se poco cambia visto che questo problema è load balanced)
+            //ovvero se arriva prima il messaggio del processo P - 1, allora possiamo subito aggiornare
             MPI_Recv(matrix,COLS * 2,type,(rank + nProc - 1) % nProc,1,MPI_COMM_WORLD,nullptr);
-            MPI_Recv(&matrix[V(ROWS / nProc + 2 + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
-
             updateWorld(matrix, 1, 2,false);
-            updateWorld(matrix, ROWS / nProc + 1 + extra, 2,false);
-
             MPI_Isend(matrix,2 * COLS,type,(rank + nProc - 1) % nProc,0,MPI_COMM_WORLD,&request);
-            MPI_Isend(&matrix[V(ROWS / nProc + 2 + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
+
+
+            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
+            updateWorld(matrix, procRows + 1 + extra, 2,false);
+            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
             
         }
         else //i processi dispari inviano i propri bordi e li ricevono
         {
             //invio i miei bordi con annesso vicino 
+            //utilizzo un Send non bloccante per far subito computare i processi vicini,inviandoli il prima possibile entrambi
             MPI_Isend(&matrix[V(2,0)],2 * COLS,type,(rank + nProc - 1) % nProc,0,MPI_COMM_WORLD,&request);
-            MPI_Isend(&matrix[V(ROWS / nProc + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
-            
+            MPI_Isend(&matrix[V(procRows + extra,0)],2 * COLS,type,(rank + nProc + 1) % nProc,1,MPI_COMM_WORLD,&request);
+      
             MPI_Recv(&matrix[V(2,0)],COLS * 2,type,(rank + nProc - 1) % nProc,1,MPI_COMM_WORLD,nullptr);
-            MPI_Recv(&matrix[V(ROWS / nProc + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(&matrix[V(procRows + extra,0)],COLS * 2,type,(rank + nProc + 1) % nProc,0,MPI_COMM_WORLD,nullptr);
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
