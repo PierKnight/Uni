@@ -1,4 +1,4 @@
-#include "wator/big/wator.cpp"
+#include "wator/wator.cpp"
 
 int main(int argc, char *argv[])
 {

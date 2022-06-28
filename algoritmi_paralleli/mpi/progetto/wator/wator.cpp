@@ -4,7 +4,7 @@
 #include <time.h>
 #include "creature.cpp"
 #include <stdio.h>
-#include "../settings.cpp"
+#include "settings.cpp"
 #define V(R,C) ((R) * COLS + (C))
 
 //ottieni una posizione valida causale dato il tipo di creatura ricercata
@@ -106,6 +106,7 @@ inline void sharkUpdate(creature* matrix,int i,int j,int fromRow,int toRow,bool 
 
 inline void initMatrix(creature* matrix,int offset,int rows,int cols)
 {
+    offset = 0;
     for(int i = offset;i < rows + offset;i++)
     {
         for(int j = 0;j < cols;j++)
