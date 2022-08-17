@@ -1,6 +1,5 @@
 #include <mpi.h>
 #include "wator/wator.cpp"
-#define CELL_SIZE 10
 
 inline void createCreatureType(MPI_Datatype* data)
 {
@@ -27,9 +26,10 @@ int main(int argc, char *argv[])
     //rank del processo destro
     int right = (rank + nProc + 1) % nProc;
 
-    if(rank == 0 && ROWS < nProc * 4)
+    if(ROWS < nProc * 4)
     {
-        printf("this wa-tor implementation requieres that the number of rows is at least four times bigger the number of precesses\n");
+        if(rank == 0)
+            printf("this wa-tor implementation requieres that the number of rows is at least four times bigger the number of precesses\n");
         MPI_Finalize();
         exit(0);
     }
@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
     }
 
     delete [] matrix;
+    MPI_Type_free(&type);
     MPI_Finalize();
     
     return 0;

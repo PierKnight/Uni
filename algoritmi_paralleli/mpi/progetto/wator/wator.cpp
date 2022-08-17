@@ -111,7 +111,8 @@ inline void initMatrix(creature* matrix,int offset,int rows,int cols)
     {
         for(int j = 0;j < cols;j++)
         {
-            matrix[V(i,j)].type = rand() % 3;
+            int r = rand() % 5;
+            matrix[V(i,j)].type = r < 3 ? r : 0;
             if(matrix[V(i,j)].type == SHARK)
                 matrix[V(i,j)].energy = START_ENERGY;
         }

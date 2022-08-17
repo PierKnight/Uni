@@ -2,7 +2,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include "wator/wator.cpp"
-#define CELL_SIZE 2
+//grandezza in pixel di una singola cella
+#define CELL_SIZE 5
 
 #define FISH_COLOR al_map_rgb(200,0,0)
 #define SHARK_COLOR al_map_rgb(0,200,0)
@@ -10,10 +11,6 @@
 
 
 //mpiCC allegro_parallel.cpp $(pkg-config --libs allegro-5 allegro_main-5 allegro_primitives-5 )
-//export DISPLAY=:0
-
-
-
 inline void createCreatureType(MPI_Datatype* data)
 {
     MPI_Aint displacements[3]  = {offsetof(creature,moved),offsetof(creature,energy),offsetof(creature,type)};
@@ -64,14 +61,23 @@ int main(int argc, char *argv[])
 
     //il numero di righe per processo (senza contare il resto)
     int procRows = ROWS / nProc;
-    //rank del processo sinistro
-    int left = (rank + nProc - 1) % nProc;
-    //rank del processo destro
-    int right = (rank + nProc + 1) % nProc;
 
-    if(rank == 0 && ROWS < nProc * 4)
+    int period = 1;
+    MPI_Comm newComm;
+    MPI_Cart_create(MPI_COMM_WORLD,1,&nProc,&period,0,&newComm);
+
+
+    //rank del processo sinistro
+    int left;
+    //rank del processo destro
+    int right;
+    
+    MPI_Cart_shift(newComm,0,1,&left,&right);
+
+    if(ROWS < nProc * 4)
     {
-        printf("this wa-tor implementation requieres that the number of rows is at least four times bigger the number of precesses\n");
+        if(rank == 0)
+            printf("this wa-tor implementation requieres that the number of rows is at least four times bigger the number of precesses\n");
         MPI_Finalize();
         exit(0);
     }
@@ -132,19 +138,6 @@ int main(int argc, char *argv[])
 
     }
 
-    int len = nProc;
-    int period = 1;
-    MPI_Comm newComm;
-
-    MPI_Cart_create(MPI_COMM_WORLD,1,&nProc,&period,0,&newComm);
-
-    if(rank == 0)
-    {
-        int left;
-        int right;
-        MPI_Cart_shift(newComm,0,1,&left,&right);
-        printf("Nears %d %d",left,right);
-    }
 
     bool exit = false;
 
@@ -159,7 +152,7 @@ int main(int argc, char *argv[])
     				al_wait_for_event(queue, &ev);
     				if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
     					exit = true;
-                        MPI_Abort(MPI_COMM_WORLD,0);
+                        MPI_Abort(newComm,0);
     					break;
     				}
     			} while(!al_is_event_queue_empty(queue));
@@ -175,14 +168,14 @@ int main(int argc, char *argv[])
         if(nProc % 2 == 1 && rank == 0) //questo serve per gestire il caso di un numero dispari di processori
         {
             //invio parte di sinistra
-            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,left,0,MPI_COMM_WORLD,&request);
+            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,left,0,newComm,&request);
             //riceve aggiorna e reinvia il bordo di destra
-            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,right,0,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,right,0,newComm,nullptr);
             updateWorld(matrix, procRows + 1 + extra, 2,false);
-            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,right,1,MPI_COMM_WORLD,&request);
+            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,right,1,newComm,&request);
             
             //riceve il bordo lavorato di sinistra
-            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,left,1,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,left,1,newComm,nullptr);
           
         }
         else if(rank % 2 == 0) //i processi pari ricevono i bordi, li aggiornano e li rinviano
@@ -190,29 +183,29 @@ int main(int argc, char *argv[])
             //si può notare overhead causato da idle dei processi che devono aspettare ambedue vicini di inviare i bordi
             //cerchiamo di tamponare, (anche se poco cambia visto che questo problema è load balanced)
             //ovvero se arriva prima il messaggio del processo P - 1, allora possiamo subito aggiornare
-            MPI_Recv(matrix,COLS * 2,type,left,1,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(matrix,COLS * 2,type,left,1,newComm,nullptr);
             updateWorld(matrix, 1, 2,false);
-            MPI_Isend(matrix,2 * COLS,type,left,0,MPI_COMM_WORLD,&request);
+            MPI_Isend(matrix,2 * COLS,type,left,0,newComm,&request);
 
 
-            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,right,0,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(&matrix[V(procRows + 2 + extra,0)],COLS * 2,type,right,0,newComm,nullptr);
             updateWorld(matrix, procRows + 1 + extra, 2,false);
-            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,right,1,MPI_COMM_WORLD,&request);
+            MPI_Isend(&matrix[V(procRows + 2 + extra,0)],2 * COLS,type,right,1,newComm,&request);
             
         }
         else //i processi dispari inviano i propri bordi e li ricevono
         {
             //invio i miei bordi con annesso vicino 
             //utilizzo un Send non bloccante per far subito computare i processi vicini,inviandoli il prima possibile entrambi
-            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,left,0,MPI_COMM_WORLD,&request);
-            MPI_Isend(&matrix[V(procRows + extra,0)],2 * COLS,type,right,1,MPI_COMM_WORLD,&request);
+            MPI_Isend(&matrix[V(2,0)],2 * COLS,type,left,0,newComm,&request);
+            MPI_Isend(&matrix[V(procRows + extra,0)],2 * COLS,type,right,1,newComm,&request);
       
-            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,left,1,MPI_COMM_WORLD,nullptr);
-            MPI_Recv(&matrix[V(procRows + extra,0)],COLS * 2,type,right,0,MPI_COMM_WORLD,nullptr);
+            MPI_Recv(&matrix[V(2,0)],COLS * 2,type,left,1,newComm,nullptr);
+            MPI_Recv(&matrix[V(procRows + extra,0)],COLS * 2,type,right,0,newComm,nullptr);
         }
 
         //utilizzo gatherv per poter raccogliere sub-matrix di dimensione differente a causa del possibile resto dato da ROWS % nProc
-        MPI_Gatherv(&matrix[V(2,0)],(procRows + extra) * COLS,type,drawMatrix,recvcounts,disp,type,0,MPI_COMM_WORLD);
+        MPI_Gatherv(&matrix[V(2,0)],(procRows + extra) * COLS,type,drawMatrix,recvcounts,disp,type,0,newComm);
         if(rank == 0)
         {
             drawWorld(drawMatrix);
